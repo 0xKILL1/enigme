@@ -46,105 +46,70 @@ L'utilisation du CPU au fil du temps est affichée sous forme de graphique. Pour
   - **LineDataSet** : Permet de définir les données du graphique (p. ex., l'utilisation du CPU).
   - **MPAndroidChart** : Bibliothèque tierce pour la gestion des graphiques.
 
-### Schéma de fonctionnement
-
-1. **MainActivity** : 
-   - Permet de récupérer et afficher les données des ressources via un bouton.
-   - Utilise un **RecyclerView** pour afficher dynamiquement les métriques.
-   - Permet à l'utilisateur de modifier l'adresse IP du serveur via **startActivityForResult()**.
-
-2. **IpActivity** : 
-   - Permet à l'utilisateur de saisir et modifier l'adresse IP du serveur.
-   - Renvoie la nouvelle IP à **MainActivity** via **setResult()**.
-
-3. **CpuActivity** : 
-   - Affiche l'utilisation du CPU sous forme de graphique linéaire avec **MPAndroidChart**.
-
-4. **GraphActivity** : 
-   - Affiche d'autres graphiques ou métriques détaillées si nécessaire.
-
 ---
+
+## **Schéma de fonctionnement**
+
+### MainActivity
+- Permet de récupérer et afficher les données des ressources via un bouton.
+- Utilise un **RecyclerView** pour afficher dynamiquement les métriques.
+- Permet à l'utilisateur de modifier l'adresse IP du serveur via **startActivityForResult()**.
+
+### IpActivity
+- Permet à l'utilisateur de saisir et modifier l'adresse IP du serveur.
+- Renvoie la nouvelle IP à **MainActivity** via **setResult()**.
+
+### CpuActivity
+- Affiche l'utilisation du CPU sous forme de graphique linéaire avec **MPAndroidChart**.
+
+### GraphActivity
+- Affiche d'autres graphiques ou métriques détaillées si nécessaire.
 
 L'application repose sur une architecture simple, avec l'utilisation d'**Intents** pour passer des données entre les activités et des appels HTTP pour récupérer les données depuis le serveur. Le **RecyclerView** et **MPAndroidChart** sont utilisés pour une gestion optimale des données et de l'affichage graphique.
 
-Voici les méthodes déclaré et instancié, ce quelle prenne en argument et ce qu'elle retourne : 
+---
 
-# Documentation des Classes et Méthodes
+## **Documentation des Classes et Méthodes**
 
-## **IpActivity**  
+### IpActivity
 
-### **Attributs**  
-- `String url` → Stocke l'URL du serveur.  
-- `EditText ip` → Champ de saisie permettant à l'utilisateur d'entrer une nouvelle IP.  
-- `Button validation` → Bouton permettant de valider l'IP saisie.  
+#### Attributs
+- `String url` → Stocke l'URL du serveur.
+- `EditText ip` → Champ de saisie permettant à l'utilisateur d'entrer une nouvelle IP.
+- `Button validation` → Bouton permettant de valider l'IP saisie.
 
-### **Méthodes et instanciations**  
-- `getIntent()` → Récupère l'intent qui a lancé l'activité.  
-- `getStringExtra("URL")` → Récupère la valeur de l'URL transmise par l'intent.  
-- `findViewById(R.id.newIp)` → Récupère l'élément `EditText` de l'UI.  
-- `setText(url)` → Remplit le champ de texte avec l'URL actuelle.  
-- `findViewById(R.id.valideButton)` → Récupère le bouton de validation.  
-- `setOnClickListener(this)` → Définit `IpActivity` comme gestionnaire de clics sur `validation`.  
-
-### **Méthodes importantes**  
-- **`onClick(View v)`**  
-  - **Paramètre :** `View v` (l'élément qui a été cliqué).  
-  - **Description :**  
-    - Crée un nouvel `Intent` pour renvoyer la nouvelle IP.  
+#### Méthodes importantes
+- **onClick(View v)**  
+  - **Paramètre** : `View v` (l'élément qui a été cliqué).
+  - **Description** :  
+    - Crée un nouvel **Intent** pour renvoyer la nouvelle IP.  
     - `putExtra("newURL", ip.getText().toString())` → Ajoute la nouvelle IP à l'intent.  
     - `setResult(RESULT_OK, retour)` → Retourne la nouvelle IP à l'activité principale.  
-    - `finish()` → Ferme `IpActivity`.  
+    - `finish()` → Ferme **IpActivity**.
 
 ---
 
-## **GraphActivity**  
+### CpuActivity
 
-### **Attributs**  
-- `ArrayList metrics` → Stocke la liste des métriques récupérées.  
-- `ArrayList nomBar` → Liste des noms des barres du graphique.  
-- `ArrayList<BarEntry> toBar` → Liste des entrées pour le graphique en barres.  
-- `BarChart barChart` → Objet graphique pour afficher un histogramme.  
-- `Button btn` → Bouton permettant de revenir à l'écran d'accueil.  
+#### Attributs
+- `LineChart lineChart` → Graphique pour afficher l'évolution du CPU.
+- `ArrayList<Entry> entryList` → Liste des entrées du graphique linéaire.
+- `ArrayList<String> legDates` → Liste des dates associées aux points du graphique.
+- `ArrayList<Metric> graphMetrics` → Liste des métriques du CPU récupérées.
+- `Gson gson` → Objet pour manipuler le JSON.
 
-### **Méthodes et instanciations**  
-- `getIntent().getParcelableArrayListExtra("test")` → Récupère la liste des métriques passées en `extra`.  
-- `new ArrayList<>()` → Instancie une nouvelle liste.  
-- `findViewById(R.id.barChart)` → Récupère le graphique de l'interface utilisateur.  
-- `findViewById(R.id.btn)` → Récupère le bouton de retour.  
-- `setOnClickListener(this)` → Définit `GraphActivity` comme gestionnaire de clics sur `btn`.  
+#### Méthodes importantes
+- **setupLineChart()**  
+  - Configure **LineChart** avec **LineDataSet** contenant les points du CPU.
+  - `setColor(Color.BLUE)` → Définit la couleur des lignes du graphique.
+  - `setValueTextSize(12f)` → Ajuste la taille du texte des valeurs.
+  - `setDrawCircles(true)` → Active l'affichage des points.
 
-### **Construction du graphique**  
-- **Création du dataset**  
-  - `new BarDataSet(toBar, getString(R.string.graph))` → Crée un ensemble de données pour l'histogramme.  
-  - `setColors(couleurs)` → Définit la couleur des barres.  
-  - `setValueTextSize(16f)` → Définit la taille du texte des valeurs affichées.  
-  - `setHighlightEnabled(false)` → Désactive la mise en surbrillance des barres.  
+---
 
-- **Ajout des données**  
-  - `for (int i = 0; i < metrics.size(); i++) {}` → Boucle pour parcourir les métriques.  
-  - `new BarEntry(i, metric.getValue())` → Crée une entrée pour chaque métrique.  
-  - `nomBar.add(metric.getName())` → Ajoute le nom de la métrique à la liste des noms.  
+## **Schéma fonctionnel**
 
-- **Configuration des axes**  
-  - `barChart.getAxisLeft()` → Récupère l'axe Y.  
-  - `yAxis.setAxisMinimum(0f); yAxis.setAxisMaximum(100f);` → Définit les valeurs min/max.  
-  - `barChart.getXAxis()` → Récupère l'axe X.  
-  - `xAxis.setValueFormatter(new IndexAxisValueFormatter(nomBar))` → Définit les labels des barres.  
-  - `xAxis.setPosition(XAxis.XAxisPosition.BOTTOM)` → Positionne les labels en bas.  
-  - `xAxis.setLabelRotationAngle(90f)` → Fait pivoter les labels.  
-
-- **Affichage du graphique**  
-  - `new BarData(barDataSet)` → Crée l'objet contenant les données du graphique.  
-  - `barChart.setData(barData)` → Associe les données au graphique.  
-  - `barChart.invalidate()` → Rafraîchit l'affichage.  
-
-### **Méthodes importantes**  
-- **`onClick(View view)`**  
-  - **Paramètre :** `View view` (l'élément qui a été cliqué).  
-  - **Description :**  
-    - Vérifie si l'ID du bouton correspond à `R.id.btn`.  
-    - Crée un `Intent` vers `MainActivity`.  
-    - `startActivity(Accueil)` → Lance `MainActivity`.  
+L'application repose sur une architecture simple, avec l'utilisation d'**Intents** pour passer des données entre les activités et des appels HTTP pour récupérer les données depuis le serveur. Vous trouverez ci-dessous le schéma fonctionnel avec les liens entre les différentes activités et un aperçu de l'application.
 
 ---
 
@@ -160,8 +125,5 @@ Voici les méthodes déclaré et instancié, ce quelle prenne en argument et ce 
 ### **Méthodes et instanciations**  
 - `getIntent().getParcelableArrayListExtra("donne")` → Récupère la liste des métriques CPU.  
 - `new ArrayList<>()` → Instancie une liste vide pour stocker les métriques.  
-- `Toast.makeText(this, "ouIIIIIIi", Toast.LENGTH_SHORT).show();` → Affiche un message temporaire.  
-
-```
-
+- `Toast.makeText(this, "ouIIIIIIi", Toast.LENGTH_SHORT).show();` → Affiche un message temporaire.
 
