@@ -23,6 +23,10 @@ Ensuite, les données sont traitées dans une **callback method** (comme **onRes
   - **RecyclerView** : Affichage des données dans une liste dynamique.
   - **RecyclerView.Adapter** : Utilisé pour lier les données au **RecyclerView**.
 
+Les métriques avec une base de temps sont enregistrées sur le téléphone grâce à un **FileWriter**. Lorsqu'une métrique spécifique est récupérée (par exemple, l'utilisation du CPU), l'application associe une donnée temporelle (**timestamp**) à cette métrique. Ensuite, l'application lit le fichier stocké sur le téléphone avant d'envoyer les données de **MainActivity** vers **CpuActivity** via un **Intent** avec un **ArrayList** en extra. 
+
+Enfin, dans **CpuActivity**, les **ArrayLists** sont transformés en **Entry** pour être affichés sous forme de graphique dans un **LineChart**.
+
 ### Changement de serveur
 
 L'utilisateur peut modifier l'adresse IP du serveur à interroger. Cette fonctionnalité est implémentée via une **Activity** spécifique, comme **IpActivity**, qui permet à l'utilisateur de saisir une nouvelle adresse IP dans un **EditText**. Une fois l'adresse IP saisie, l'**Intent** renvoie cette nouvelle IP à l'activité principale (par exemple, **MainActivity**) grâce à **setResult()** et **startActivityForResult()**.
@@ -60,3 +64,5 @@ L'utilisation du CPU au fil du temps est affichée sous forme de graphique. Pour
    - Affiche d'autres graphiques ou métriques détaillées si nécessaire.
 
 ---
+
+L'application repose sur une architecture simple, avec l'utilisation d'**Intents** pour passer des données entre les activités et des appels HTTP pour récupérer les données depuis le serveur. Le **RecyclerView** et **MPAndroidChart** sont utilisés pour une gestion optimale des données et de l'affichage graphique.
